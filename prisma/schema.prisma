@@ -13,12 +13,12 @@ datasource db {
 }
 model User {
   id   Int @id @default(autoincrement())
-  name String | null
-  image String | null
+  name String? 
+  image String? 
   email String @unique
-  emailVerified DateTime | null
-  password String| null
-  telephone String | null
+  emailVerified DateTime?  
+  password String? 
+  telephone String?  
   role String @default("User")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
