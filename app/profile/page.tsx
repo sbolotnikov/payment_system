@@ -93,7 +93,6 @@ const page: FC<pageProps> = () => {
     document.querySelector("#password")!.classList.remove("invalid_input");
     document.querySelector("#passwordConfirm")!.classList.remove("invalid_input");
     document.querySelector("#telephone")!.classList.remove("invalid_input");        
-  // (e: React.SyntheticEvent) => {
     // submitting profile updated information
     if (name.length<3) {
       validationError ="User Name is too short";

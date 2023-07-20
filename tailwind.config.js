@@ -23,7 +23,7 @@ module.exports = {
         lightblue:"#6495A3",
         lightlavender:"#AFCDCD",
 
-
+        alertcolor:"#a01c1c",
         menuBGColor:"#6495A3",
         darkMainColor: '#F3F4F6',
         darkMainBG: '#374151',
