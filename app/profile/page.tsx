@@ -71,7 +71,8 @@ const page: FC<pageProps> = () => {
 
   const handleSubmit=
   (event: React.SyntheticEvent) => {
-    event.preventDefault();
+    event.stopPropagation();
+     
     const target1 = event.target as typeof event.target & {
       user_name: { value: string };
       user_email: { value: string };
@@ -205,7 +206,7 @@ return <div className="w-full flex justify-center items-center">
             <input
               name="user_name"
               id="user_name"
-              className="flex-1 outline-none border-none rounded-md p-0.5 mx-1 my-1"
+              className="flex-1 outline-none bg-menuBGColor border-none rounded-md p-0.5 mx-1 my-1"
               type="text"
               placeholder="Enter Name"
               ref={userNameRef}
@@ -219,13 +220,12 @@ return <div className="w-full flex justify-center items-center">
               Profile Picture Link
               <input
                 type="text"
-                className="flex-1 outline-none border-none rounded-md p-0.5 mx-1 my-1"
+                className="flex-1 outline-none bg-menuBGColor border-none rounded-md p-0.5 mx-1 my-1"
                 onChange={(e) => {
                   setUserURL(e.target.value);
                 }}
                 defaultValue={(session?.user.image)?session?.user.image:""}
               />
-              Upload File
 
               <FileUpload
                 getImgUrl={getImgUrl}
@@ -237,7 +237,7 @@ return <div className="w-full flex justify-center items-center">
             <input
               name="user_email"
               id="user_email"
-              className="flex-1 outline-none border-none rounded-md -bg p-0.5 mx-1 my-1"
+              className="flex-1 outline-none bg-menuBGColor border-none rounded-md -bg p-0.5 mx-1 my-1"
               type="email"
               ref={emailRef}
               required
@@ -247,7 +247,7 @@ return <div className="w-full flex justify-center items-center">
           <label className="flex flex-col items-center p-3  rounded-t-md bottom-0">
             Password
             <input
-              className="flex-1 outline-none border-none rounded-md  p-0.5 mx-1 my-1"
+              className="flex-1 outline-none bg-menuBGColor border-none rounded-md  p-0.5 mx-1 my-1"
               name="password"
               id="password"
               type="password"
@@ -259,7 +259,7 @@ return <div className="w-full flex justify-center items-center">
           <label className="flex flex-col items-center p-3  rounded-t-md bottom-0">
             Confirm Password
             <input
-              className="flex-1 outline-none border-none rounded-md  p-0.5 mx-1 my-1"
+              className="flex-1 outline-none bg-menuBGColor border-none rounded-md  p-0.5 mx-1 my-1"
               name="passwordConfirm"
               id="passwordConfirm"
               type="password"
@@ -270,7 +270,7 @@ return <div className="w-full flex justify-center items-center">
           <label className="flex flex-col items-center p-3  rounded-t-md bottom-0">
             Telephone:
             <input
-              className="flex-1 outline-none border-none rounded-md bg-main-bg p-0.5 mx-1 my-1"
+              className="flex-1 outline-none bg-menuBGColor border-none rounded-md bg-main-bg p-0.5 mx-1 my-1"
               name="telephone"
               id="telephone"
               type="tel"
@@ -286,7 +286,7 @@ return <div className="w-full flex justify-center items-center">
           </label>
           <button
             disabled={loading}
-            className="btnBlue"
+            className="btnFancy"
             style={{ width: '100%', margin: '2% auto' }}
             type="submit"
           >

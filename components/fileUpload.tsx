@@ -21,30 +21,29 @@ export default function FileUpload(props: fileUploadProps) {
         'JPEG',
         100,
         0,
-        (uri:any) => {
+        (uri: any) => {
           resolve(uri);
         },
         'file'
       );
     });
 
-
   return (
-    <div className="w-full flex flex-col justify-center items-center ">
-      <input
-        type="file"
-        id="fileInput"
-        className="w-full border-0 m-2 rounded-md"
-        onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
-          e.preventDefault();
-
+      <div>
+        <input
+          type="file"
+          id="fileInput"
+          hidden
+          onChange={async (e: React.ChangeEvent<HTMLInputElement>) => {
             try {
-              const image = await resizeFile(e.currentTarget.files![0]) as any;
+              const image = (await resizeFile(
+                e.currentTarget.files![0]
+              )) as any;
               let filename = uuidv4() + '.jpg';
-              console.log(image)
+              console.log(image);
               const { error } = await supabase.storage
                 .from('images')
-                .upload(filename, image); 
+                .upload(filename, image);
 
               if (error) {
                 console.log(error);
@@ -55,26 +54,14 @@ export default function FileUpload(props: fileUploadProps) {
                   '/storage/v1/object/public/images/' +
                   filename
               );
-              console.log(
-                process.env.NEXT_PUBLIC_SUPABASE_URL! +
-                  '/storage/v1/object/public/images/' +
-                  filename
-              );
             } catch (err) {
               console.log(err);
             }
-          }
-        }
-      />
-      {/* <div
-        className="w-full m-3 p-1 text-sm border text-center rounded-lg navbar__item"
-        onClick={(e) => {
-          e.preventDefault();
-          pictureUpload();
-        }}
-      >
-        Сохранить
-      </div> */}
-    </div>
+          }}
+        />
+      <button className="w-1/2 btnFancy" onClick={(e)=>document.getElementById("fileInput")!.click()}>
+        Upload Avatar
+      </button>
+      </div>
   );
 }

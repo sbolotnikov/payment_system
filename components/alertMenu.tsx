@@ -46,9 +46,8 @@ onReturn: (val: string, val2:string | null ) => void}
 export default function AlertMenu(props:AlertType) {
   // main popup alert component
   // DO NOT FORGET TO NAME main tag id="mainPage"
-  console.log('just in')
+
   const el = document.querySelector('#mainPage');
-  console.log('got el main')
   const [button1Color, setbutton1Color]=useState({'color': "", 'backgroundColor': '','borderColor': ''});
   const [button2Color, setbutton2Color]=useState({'color': "", 'backgroundColor': '','borderColor': ''});
   const [value, setValue] = useState("");
@@ -70,7 +69,6 @@ const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElemen
         }
   useEffect(() => {
     // setup buttons style on load 
-    console.log(Object.values(variant)[(Object.keys(variant)as (keyof typeof variant)[] as string[]).indexOf(props.styling.color1)])
     setbutton1Color(Object.values(variant)[(Object.keys(variant)as (keyof typeof variant)[] as string[]).indexOf(props.styling.color1)] as {'color': string, 'backgroundColor': string,'borderColor': string} );
     setbutton2Color(Object.values(variant)[(Object.keys(variant)as (keyof typeof variant)[] as string[]).indexOf(props.styling.color2)] as {'color': string, 'backgroundColor': string,'borderColor': string});
     StopScroll();

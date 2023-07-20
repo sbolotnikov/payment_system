@@ -12,6 +12,11 @@ let navbarLinks = [
     icon: 'Home',
   },
   {
+    url: '/admin/usersscreen',
+    title: 'Users Screen',
+    icon: 'Users',
+  },
+  {
     url: '/signin',
     title: 'Register',
     icon: 'Register'
@@ -35,7 +40,7 @@ export default function RootLayout({
     >
       <body suppressHydrationWarning={true}>
         <Providers>
-          <main id="mainPage" className="w-screen h-screen p-0 m-0 items-center justify-center text-lightMainColor bg-lightMainBG dark:text-darkMainColor dark:bg-darkMainBG">
+          <main id="mainPage" className="w-screen h-screen p-0 m-0 items-center justify-center overflow-scroll text-lightMainColor bg-lightMainBG dark:text-darkMainColor dark:bg-darkMainBG">
             <Navbar navbarLinks={navbarLinks} path={''} locale={'EN'} />
             {children}
           </main>
