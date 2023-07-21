@@ -4,20 +4,21 @@ import { useRef, useEffect, useState } from 'react';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-// import Cloudinary from '../components/Cloudinary';
 import AlertMenu from '../../components/alertMenu';
 import ShowIcon from '../../components/svg/showIcon';
 import Loading from '../../components/Loading';
-import FileUpload from '@/components/fileUpload';
+import ChooseAvatar from '@/components/chooseAvatar';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_KEY!
+  );
+  
 interface pageProps {
   
 }
-// interface userType {
-//     image: string,
-//     name:  string,
-//     telephone:  string,
 
-// }
 const page: FC<pageProps> = () => {
     const { data: session } = useSession();
     let user={image:"",name:"",telephone:"", email:""}
@@ -51,13 +52,8 @@ const page: FC<pageProps> = () => {
   }, [session]);
   const [userURL, setUserURL] = useState(session?.user.image);
   const [phone, setPhone] = useState((session?.user.telephone)?session?.user.telephone:'');
+   
   
-    const getImgUrl = (url:string) => {
-    // update URL of the profile picture
-    setUserURL(url);
-    setRevealCloud(false);
-    console.log(userURL);
-  };
   const onReturn =  (decision1:string) => {
     setRevealAlert(false);
     if (decision1 == 'Close') {
@@ -68,25 +64,33 @@ const page: FC<pageProps> = () => {
       setLoading(false);
     }
   };
-
+  const onReturnAvatar =  (decision1:string, fileLink:string) => {
+    setRevealCloud(false);
+    if (decision1 == 'Close') {
+      
+      console.log(decision1)
+    }
+    if (decision1 == 'Upload') {
+      console.log(decision1, fileLink);
+      setUserURL(fileLink);
+    }
+  };
   const handleSubmit=
   (event: React.SyntheticEvent) => {
-    event.stopPropagation();
-     
+    event.preventDefault();
     const target1 = event.target as typeof event.target & {
       user_name: { value: string };
       user_email: { value: string };
       password: { value: string };
       passwordConfirm: { value: string };
       telephone: { value: string };
-    };
-    console.log(target1.user_email.value)
+    }; 
     const name = target1.user_name.value; // typechecks!
     const email = target1.user_email.value;
     const password = target1.password.value;
     const passwordConfirm = target1.passwordConfirm.value;
     const telephone= target1.telephone.value;
-    console.log(telephone)
+   
 
     let validationError="";
     document.querySelector("#user_name")!.classList.remove("invalid_input");       
@@ -147,7 +151,20 @@ console.log(passwordRef.current?.value)
         phone,
         password: passwordRef.current?.value,
       }),
-    }).then((res) => {
+    }).then(async(res) => {
+      let dbStoragePath=process.env.NEXT_PUBLIC_SUPABASE_URL!+'/storage/v1/object/public/images/'
+      console.log(dbStoragePath)
+      if ((session?.user.image)&&(session?.user.image>"")){
+        let oldFilename = session?.user.image.replace(dbStoragePath, "");
+      }
+      if ((userURL!= session?.user.image)&&(session?.user.image!="")&&(session?.user.image!.includes(dbStoragePath))){
+        console.log("delete", session?.user.image!.replace(dbStoragePath, ""))
+        const { data, error } = await supabase
+  .storage
+  .from('images')
+  .remove([session?.user.image!.replace(dbStoragePath, "")])
+        console.log(data,error)     
+      }
       if (res.status === 200) {
         setLoading(false);
         setAlertStyle({
@@ -160,6 +177,7 @@ console.log(passwordRef.current?.value)
           button2: '',
           inputField:""
         });
+        
         setRevealAlert(true);
         console.log(res);
       }
@@ -167,7 +185,7 @@ console.log(passwordRef.current?.value)
   }
 return <div className="w-full flex justify-center items-center">
       {revealAlert && <AlertMenu onReturn={onReturn} styling={alertStyle} />}
-      
+      {revealCloud && <ChooseAvatar onReturn={onReturnAvatar} styling={alertStyle} />}
       {loading && <Loading />}
       <div
         className="border-0 rounded-md max-auto p-4 shadow max-w-[450px] w-full m-3"
@@ -193,7 +211,20 @@ return <div className="w-full flex justify-center items-center">
             <button className=" outline-none border-none fill-lightMainColor  stroke-lightMainColor dark:fill-darkMainColor dark:stroke-darkMainColor rounded-md  absolute p-1 -top-3 -right-3 w-8 h-8"
             onClick={(e) => {
                 e.preventDefault();
+                setAlertStyle({
+                  variantHead: 'danger',
+                  heading: "Warning",
+                  text: "You are about to Upload New Avatar Image",
+                  color1: 'info',
+                  button1: "Upload",
+                  color2: 'secondary',
+                  button2: 'Cancel',
+                  inputField:''
+                }); 
                 setRevealCloud(!revealCloud);
+                return;
+
+                
               }}
             >
               <ShowIcon icon={'Plus'}  stroke={'2'}/>
@@ -212,26 +243,7 @@ return <div className="w-full flex justify-center items-center">
               ref={userNameRef}
             />
           </label>
-          {revealCloud && (
-            <label
-              className="flex flex-col items-center rounded-t-md bottom-0 border border-lightMainColor dark:border-darkMainColor  m-1 p-1 rounded-md"
-              id="userURL"
-            >
-              Profile Picture Link
-              <input
-                type="text"
-                className="flex-1 outline-none bg-menuBGColor border-none rounded-md p-0.5 mx-1 my-1"
-                onChange={(e) => {
-                  setUserURL(e.target.value);
-                }}
-                defaultValue={(session?.user.image)?session?.user.image:""}
-              />
 
-              <FileUpload
-                getImgUrl={getImgUrl}
-              />
-            </label>
-          )}
           <label className="flex flex-col items-center p-3  rounded-t-md bottom-0">
             Email Address
             <input

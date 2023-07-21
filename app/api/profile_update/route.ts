@@ -63,7 +63,7 @@ export  async function POST(
     await prisma.$disconnect()
     //Send success response
     return new NextResponse(
-      JSON.stringify({ message: 'User created',status: 201,
+      JSON.stringify({ message: 'User created',status: 200,
       }),
     );
   } catch (error) {

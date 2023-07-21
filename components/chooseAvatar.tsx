@@ -1,5 +1,13 @@
 'use client'
 import { useEffect, useState } from "react"
+import Resizer from 'react-image-file-resizer';
+import { createClient } from '@supabase/supabase-js';
+import { v4 as uuidv4 } from 'uuid';
+
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_KEY!
+  );
 // color schemas for different occasions 
 var variant = {
   'danger': {
@@ -41,11 +49,26 @@ color2: string,
 button2: string,
 inputField:string,
 },
-onReturn: (val: string, val2:string | null ) => void}
+onReturn: (val: string, val2:string ) => void}
 
-export default function AlertMenu(props:AlertType) {
+export default function ChooseAvatar(props:AlertType) {
   // main popup alert component
   // DO NOT FORGET TO NAME main tag id="mainPage"
+  const resizeFile = (file: any) =>
+  new Promise((resolve) => {
+    Resizer.imageFileResizer(
+      file,
+      300,
+      300,
+      'JPEG',
+      100,
+      0,
+      (uri: any) => {
+        resolve(uri);
+      },
+      'file'
+    );
+  });
 
   const el = document.querySelector('#mainPage');
   const [button1Color, setbutton1Color]=useState({'color': "", 'backgroundColor': '','borderColor': ''});
@@ -63,10 +86,31 @@ function AllowScroll(){
   // when done release scroll
   window.onscroll=function(){};
 }
-const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+const handleChange =async (e: React.ChangeEvent<HTMLInputElement>)=> {
            e.preventDefault();
-           console.log(e.target.value)
-           setValue(e.target.value);
+           try {
+            const image = (await resizeFile(
+              e.currentTarget.files![0]
+            )) as any;
+            let filename = uuidv4() + '.jpg';
+            console.log(image);
+            const { error } = await supabase.storage
+              .from('images')
+              .upload(filename, image);
+            if (error) {
+              console.log(error);
+              alert('Error uploading file to Supabase');
+            }
+            props.onReturn(props.styling.button1,
+              process.env.NEXT_PUBLIC_SUPABASE_URL +
+                '/storage/v1/object/public/images/' +
+                filename
+            );
+          } catch (err) {
+            console.log(err);
+          }
+
+        //    setValue(e.target.value);
         }
   useEffect(() => {
     // setup buttons style on load 
@@ -80,18 +124,20 @@ const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElemen
       <div className='m-auto  max-w-[600px] bg-gray-200 border-2 border-solid border-gray-400 rounded-md w-[97%] p-2 flex flex-col content-evenly'>
         <label className='px-1 py-2 border-2 border-solid border-transparent rounded-sm w-full m-1 text-center' style={Object.values(variant)[Object.keys(variant).indexOf(props.styling.variantHead)]}>{props.styling.heading}</label>
         <h5 className="px-1 py-2 border-2 border-solid border-transparent text-light rounded-sm w-full m-1 text-center"  dangerouslySetInnerHTML={{ __html:props.styling.text}}/>
-        {props.styling.inputField=="true" && <textarea id="inputField" className="w-full mb-2 rounded-md text-gray-700" 
-        onChange={handleChange}/>}
+         <input type="file" hidden id="inputField" className="w-full mb-2 rounded-md text-gray-700" 
+        onChange={handleChange}/>
         {(props.styling.color1!=="") && 
         <button className='px-1 py-2 border-2 border-solid border-transparent rounded-sm w-full m-1 text-center text-white' style={button1Color} 
         onClick={() => {
           AllowScroll();
-          const input = document.querySelector("#inputField") as HTMLInputElement | null;
-          props.onReturn(props.styling.button1, (input != null)?input.value:null) 
+          document.getElementById("inputField")!.click()
+        //   const input = document.querySelector("#inputField") as HTMLInputElement ;
+        //   input?.onclick
+        //   props.onReturn(props.styling.button1, (input != null)?input.value:null) 
           }}>
           {props.styling.button1}
         </button>}
-        {(props.styling.color2!=="") &&<button className="px-1 py-2 border-2 border-solid border-transparent rounded-sm w-full m-1 text-center text-white" style={button2Color} onClick={e => {AllowScroll(); props.onReturn(props.styling.button2, null) }}>
+        {(props.styling.color2!=="") &&<button className="px-1 py-2 border-2 border-solid border-transparent rounded-sm w-full m-1 text-center text-white" style={button2Color} onClick={e => {AllowScroll(); props.onReturn(props.styling.button2, "") }}>
           {props.styling.button2}
         </button>}
 
