@@ -1,13 +1,7 @@
 'use client'
 import { useEffect, useState } from "react"
-import Resizer from 'react-image-file-resizer';
-import { createClient } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
+import { uploadImage } from "@/utils/storagefuncs";
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_KEY!
-  );
 // color schemas for different occasions 
 var variant = {
   'danger': {
@@ -54,21 +48,6 @@ onReturn: (val: string, val2:string ) => void}
 export default function ChooseAvatar(props:AlertType) {
   // main popup alert component
   // DO NOT FORGET TO NAME main tag id="mainPage"
-  const resizeFile = (file: any) =>
-  new Promise((resolve) => {
-    Resizer.imageFileResizer(
-      file,
-      300,
-      300,
-      'JPEG',
-      100,
-      0,
-      (uri: any) => {
-        resolve(uri);
-      },
-      'file'
-    );
-  });
 
   const el = document.querySelector('#mainPage');
   const [button1Color, setbutton1Color]=useState({'color': "", 'backgroundColor': '','borderColor': ''});
@@ -88,29 +67,10 @@ function AllowScroll(){
 }
 const handleChange =async (e: React.ChangeEvent<HTMLInputElement>)=> {
            e.preventDefault();
-           try {
-            const image = (await resizeFile(
-              e.currentTarget.files![0]
-            )) as any;
-            let filename = uuidv4() + '.jpg';
-            console.log(image);
-            const { error } = await supabase.storage
-              .from('images')
-              .upload(filename, image);
-            if (error) {
-              console.log(error);
-              alert('Error uploading file to Supabase');
-            }
-            props.onReturn(props.styling.button1,
-              process.env.NEXT_PUBLIC_SUPABASE_URL +
-                '/storage/v1/object/public/images/' +
-                filename
-            );
-          } catch (err) {
-            console.log(err);
-          }
+           const img=await uploadImage(e.currentTarget.files![0]);
+           if (img!=='Error uploading to Supabase') props.onReturn(props.styling.button1,img);
 
-        //    setValue(e.target.value);
+           console.log(img)
         }
   useEffect(() => {
     // setup buttons style on load 
@@ -131,9 +91,6 @@ const handleChange =async (e: React.ChangeEvent<HTMLInputElement>)=> {
         onClick={() => {
           AllowScroll();
           document.getElementById("inputField")!.click()
-        //   const input = document.querySelector("#inputField") as HTMLInputElement ;
-        //   input?.onclick
-        //   props.onReturn(props.styling.button1, (input != null)?input.value:null) 
           }}>
           {props.styling.button1}
         </button>}

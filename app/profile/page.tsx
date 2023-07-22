@@ -5,15 +5,11 @@ import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import AlertMenu from '../../components/alertMenu';
-import ShowIcon from '../../components/svg/showIcon';
-import Loading from '../../components/Loading';
+import ShowIcon from '@/components/svg/showIcon';
+import Loading from '@/components/Loading';
 import ChooseAvatar from '@/components/chooseAvatar';
-import { createClient } from '@supabase/supabase-js';
+import { deleteImage } from '@/utils/storagefuncs';
 
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_KEY!
-  );
   
 interface pageProps {
   
@@ -158,10 +154,7 @@ console.log(passwordRef.current?.value)
       }
       if ((userURL!= session?.user.image)&&(session?.user.image!="")&&(session?.user.image!.includes(dbStoragePath))){
         console.log("delete", session?.user.image!.replace(dbStoragePath, ""))
-        const { data, error } = await supabase
-  .storage
-  .from('images')
-  .remove([session?.user.image!.replace(dbStoragePath, "")])
+        const delObj= await deleteImage(session?.user.image!.replace(dbStoragePath, ""))
          
       }
       if (res.status === 200) {
