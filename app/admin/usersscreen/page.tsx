@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react';
-// import Link from 'next/link';
 import UserForm from '@/components/userForm';
 import AlertMenu from '@/components/alertMenu';
 
@@ -33,10 +32,7 @@ function page() {
   useEffect(() => {
     // GET request
      fetch('/api/admin/users', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
+    cache:'no-store'
     }).then((res) => {
         res.json().then (data => {
             console.log(data)
@@ -144,4 +140,4 @@ function page() {
 }
                   
 export default page;
-export const dynamic = 'force-dynamic'
+

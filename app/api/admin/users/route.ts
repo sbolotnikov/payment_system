@@ -21,3 +21,4 @@ export async function GET(request: Request) {
     status: 201,
   });
 }
+export const dynamic = 'force-dynamic'
