@@ -153,7 +153,6 @@ console.log(passwordRef.current?.value)
       }),
     }).then(async(res) => {
       let dbStoragePath=process.env.NEXT_PUBLIC_SUPABASE_URL!+'/storage/v1/object/public/images/'
-      console.log(dbStoragePath)
       if ((session?.user.image)&&(session?.user.image>"")){
         let oldFilename = session?.user.image.replace(dbStoragePath, "");
       }
@@ -163,7 +162,7 @@ console.log(passwordRef.current?.value)
   .storage
   .from('images')
   .remove([session?.user.image!.replace(dbStoragePath, "")])
-        console.log(data,error)     
+         
       }
       if (res.status === 200) {
         setLoading(false);
