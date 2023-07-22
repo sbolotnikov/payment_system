@@ -1,9 +1,10 @@
-const crypto = require('crypto');
+
+import { v4 as uuidv4 } from 'uuid';
 import Resizer from 'react-image-file-resizer';
 import { createClient } from '@supabase/supabase-js';
 
 
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.SUPABASE_KEY!);
+const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.NEXT_PUBLIC_SUPABASE_KEY!);
   export async function deleteImage(url:string ) {
   const { data, error } = await supabase
   .storage
@@ -35,8 +36,7 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,process.env.
         url
       )) as any;
 
-      // let filename = uuidv4() + '.jpg';
-      let filename = crypto.randomUUID() + '.jpg';
+      let filename = uuidv4() + '.jpg';
       console.log(image);
       const { error } = await supabase.storage
         .from('images')
