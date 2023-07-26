@@ -8,7 +8,8 @@ import AlertMenu from '../../components/alertMenu';
 import ShowIcon from '@/components/svg/showIcon';
 import Loading from '@/components/Loading';
 import ChooseAvatar from '@/components/chooseAvatar';
-import { deleteImage } from '@/utils/storagefuncs';
+import { deleteImage } from '@/utils/picturemanipulation';
+import ImgFromDb from '@/components/ImgFromDb';
 
   
 interface pageProps {
@@ -67,7 +68,7 @@ const page: FC<pageProps> = () => {
       console.log(decision1)
     }
     if (decision1 == 'Upload') {
-      console.log(decision1, fileLink);
+      console.log("file link", fileLink);
       setUserURL(fileLink);
     }
   };
@@ -152,10 +153,9 @@ console.log(passwordRef.current?.value)
       if ((session?.user.image)&&(session?.user.image>"")){
         let oldFilename = session?.user.image.replace(dbStoragePath, "");
       }
-      if ((userURL!= session?.user.image)&&(session?.user.image!="")&&(session?.user.image!.includes(dbStoragePath))){
-        console.log("delete", session?.user.image!.replace(dbStoragePath, ""))
-        const delObj= await deleteImage(session?.user.image!.replace(dbStoragePath, ""))
-         
+      if ((userURL!= session?.user.image)&&(session?.user.image!="")&&(!session?.user.image!.includes("http"))){
+        const delObj= await deleteImage(session?.user.image!)
+        console.log(delObj) 
       }
       if (res.status === 200) {
         setLoading(false);
@@ -180,8 +180,8 @@ return <div className="w-full flex justify-center items-center">
       {revealCloud && <ChooseAvatar onReturn={onReturnAvatar} styling={alertStyle} />}
       {loading && <Loading />}
       <div
-        className="border-0 rounded-md max-auto p-4 shadow max-w-[450px] w-full m-3"
-        style={{ boxShadow: '0 0 150px rgb(255 236 0 / 50%)'}}
+        className="border-0 rounded-md  max-auto p-4 shadow-2xl max-w-[450px] w-full m-3"
+        // style={{ boxShadow: '0 0 150px rgb(255 236 0 / 50%)'}}
       >
         <h2
           className="text-center fw-bolder text-uppercase"
@@ -189,12 +189,9 @@ return <div className="w-full flex justify-center items-center">
         >
           Your's {session?.user.role} Profile
           <div className="relative flex justify-center items-center outline-none border rounded-md w-24 p-4 my-6 mx-auto">
-            {userURL !== null ? (
-              <img
-                src={userURL}
-                className="object-contain"
-                alt="User Picture"
-              />
+            {((userURL !== null)&&(userURL !== undefined)) ? (
+             
+              <ImgFromDb url={userURL} stylings="object-contain"  alt="User Picture" />
             ) : (
               <div className=" h-8 w-8 md:h-10 md:w-10 fill-lightMainColor  stroke-lightMainColor dark:fill-darkMainColor dark:stroke-darkMainColor ">
                       <ShowIcon icon={'DefaultUser'} stroke={'2'}/>

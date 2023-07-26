@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react"
-import { uploadImage } from "@/utils/storagefuncs";
+import { uploadImage } from "@/utils/picturemanipulation";
 
 // color schemas for different occasions 
 var variant = {
@@ -65,13 +65,17 @@ function AllowScroll(){
   // when done release scroll
   window.onscroll=function(){};
 }
+
 const handleChange =async (e: React.ChangeEvent<HTMLInputElement>)=> {
            e.preventDefault();
+ 
            const img=await uploadImage(e.currentTarget.files![0]);
-           if (img!=='Error uploading to Supabase') props.onReturn(props.styling.button1,img);
-
-           console.log(img)
-        }
+           console.log( img)
+          
+           if (img!=='Error uploading') props.onReturn(props.styling.button1,img!);
+}
+           
+        
   useEffect(() => {
     // setup buttons style on load 
     setbutton1Color(Object.values(variant)[(Object.keys(variant)as (keyof typeof variant)[] as string[]).indexOf(props.styling.color1)] as {'color': string, 'backgroundColor': string,'borderColor': string} );
@@ -84,7 +88,7 @@ const handleChange =async (e: React.ChangeEvent<HTMLInputElement>)=> {
       <div className='m-auto  max-w-[600px] bg-gray-200 border-2 border-solid border-gray-400 rounded-md w-[97%] p-2 flex flex-col content-evenly'>
         <label className='px-1 py-2 border-2 border-solid border-transparent rounded-sm w-full m-1 text-center' style={Object.values(variant)[Object.keys(variant).indexOf(props.styling.variantHead)]}>{props.styling.heading}</label>
         <h5 className="px-1 py-2 border-2 border-solid border-transparent text-light rounded-sm w-full m-1 text-center"  dangerouslySetInnerHTML={{ __html:props.styling.text}}/>
-         <input type="file" hidden id="inputField" className="w-full mb-2 rounded-md text-gray-700" 
+         <input type="file" hidden id="inputField" accept="image/*" className="w-full mb-2 rounded-md text-gray-700" 
         onChange={handleChange}/>
         {(props.styling.color1!=="") && 
         <button className='px-1 py-2 border-2 border-solid border-transparent rounded-sm w-full m-1 text-center text-white' style={button1Color} 
@@ -103,4 +107,4 @@ const handleChange =async (e: React.ChangeEvent<HTMLInputElement>)=> {
     </div>
 
   )
-}
+        }

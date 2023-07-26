@@ -7,6 +7,7 @@ import Burger from './burger';
 import { useSession } from 'next-auth/react';
 import ShowIcon from '../svg/showIcon';
 import { signIn, signOut } from 'next-auth/react';
+import ImgFromDb from '../ImgFromDb';
 
 type Props = {
   navbarLinks: { url: string; title: string; icon: string }[];
@@ -76,11 +77,8 @@ const Navbar = ({ navbarLinks, path, locale }: Props) => {
               <div className="group h-6 w-6 md:h-8 md:w-8 flex  cursor-pointer  hover:scale-110  flex-col items-center ">
                 <div className="   group-hover:animate-bounce stroke-lightMainColor dark:stroke-darkMainColor ">
                   {session.user.image ? (
-                    <img
-                      className="object-fill rounded-full h-6 w-6 md:h-9 md:w-9"
-                      src={session.user.image ? session.user.image : ''}
-                      alt="profile picture"
-                    />
+
+                    <ImgFromDb url={session.user.image ? session.user.image : ''} stylings="object-fill rounded-full h-6 w-6 md:h-9 md:w-9"  alt="profile picture" />
                   ) : (
                     <div className=" h-6 w-6 md:h-8 md:w-8 fill-none stroke-lightMainColor dark:stroke-darkMainColor ">
                       <ShowIcon icon={'DefaultUser'} stroke={'2'}/>

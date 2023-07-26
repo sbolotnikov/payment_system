@@ -1,6 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
-import { getServerSession } from 'next-auth/next'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma';
 type Data = {

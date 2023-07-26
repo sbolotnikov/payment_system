@@ -1,22 +1,24 @@
-'use client'
+'use client';
+import ImgFromDb from './ImgFromDb';
 import ShowIcon from './svg/showIcon';
 
 interface UserType {
-    user:{
-    name:string;
-    email:string;
-    role:string;
-    image:string;
-    id:number}
-    delUser: (id:number, name:string) => void;
-  }
-function UserForm(props:UserType) {
+  user: {
+    name: string;
+    email: string;
+    role: string;
+    image: string;
+    id: number;
+  };
+  delUser: (id: number, name: string) => void;
+}
+function UserForm(props: UserType) {
   console.log(props.user);
   const changeStatus = async (e: React.SyntheticEvent<EventTarget>) => {
     e.preventDefault();
     if (!(e.target instanceof HTMLSelectElement)) {
-        return;
-      }
+      return;
+    }
     console.log(e.target.value, props.user.id);
     const res = await fetch('/api/admin/status_update', {
       method: 'PUT',
@@ -32,18 +34,29 @@ function UserForm(props:UserType) {
     window.location.reload();
   };
   const handleDelete = () => {
-    props.delUser( props.user.id, props.user.name );
+    props.delUser(props.user.id, props.user.name);
   };
   return (
     <div className="w-full relative flex flex-row justify-between flex-wrap mb-6 mx-2">
-      <img className="h-8 " src={props.user.image} alt="user image" />
+      {props.user.image ? (
+        <ImgFromDb
+          url={props.user.image}
+          stylings="h-8"
+          alt={`user {$props.user.name} image`}
+        />
+      ) : (
+        <div className=" h-6 w-6 md:h-8 md:w-8 fill-none stroke-lightMainColor dark:stroke-darkMainColor ">
+          <ShowIcon icon={'DefaultUser'} stroke={'2'} />
+        </div>
+      )}
+
       <h3 className="mx-1">{props.user.name}</h3>
       <h3>
         {'<'}
         {props.user.email}
         {'>'}
       </h3>
-      <select 
+      <select
         className="bg-main-bg mx-2"
         value={props.user.role}
         onChange={changeStatus}
